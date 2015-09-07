@@ -18,6 +18,7 @@ package com.rockerhieu.emojicon.example;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -29,6 +30,9 @@ import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
 
 public class MainActivity extends FragmentActivity implements EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
+
+    private static final String TAG = "MainActivity";
+
     EmojiconEditText mEditEmojicon;
     EmojiconTextView mTxtEmojicon;
     CheckBox mCheckBox;
@@ -43,6 +47,9 @@ public class MainActivity extends FragmentActivity implements EmojiconGridFragme
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mTxtEmojicon.setText(s);
+
+                Log.d(TAG, "onTextChanged() mEditEmojicon.isAllEmoji() : " + mEditEmojicon.isAllEmoji());
+                Log.d(TAG, "onTextChanged()  mTxtEmojicon.isAllEmoji() : " + mTxtEmojicon.isAllEmoji());
             }
         });
         mCheckBox = (CheckBox) findViewById(R.id.use_system_default);

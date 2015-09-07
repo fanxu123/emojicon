@@ -29,11 +29,13 @@ import android.widget.TextView;
  */
 public class EmojiconTextView extends TextView {
     private int mEmojiconSize;
-    private int mEmojiconAlignment;
+    private int mEmojiconAlignment = DynamicDrawableSpan.ALIGN_BASELINE;
     private int mEmojiconTextSize;
-    private int mTextStart = 0;
+    private int mTextStart  = 0;
     private int mTextLength = -1;
     private boolean mUseSystemDefault = false;
+
+    private EmojiconTextRender mEmojiconTextRender;
 
     public EmojiconTextView(Context context) {
         super(context);
@@ -63,15 +65,37 @@ public class EmojiconTextView extends TextView {
             mUseSystemDefault = a.getBoolean(R.styleable.Emojicon_emojiconUseSystemDefault, false);
             a.recycle();
         }
+        mEmojiconTextRender = new EmojiconTextRender()
+                .context(getContext())
+                .emojiSize(mEmojiconSize)
+                .emojiAlignment(mEmojiconAlignment)
+                .textSize(mEmojiconTextSize)
+                .useSystemDefault(mUseSystemDefault)
+                .setup();
+
         setText(getText());
+    }
+
+    public boolean isAllEmoji = false;
+
+    /**
+     * check if all text are emoji icons
+     */
+    public boolean isAllEmoji() {
+        return isAllEmoji;
     }
 
     @Override
     public void setText(CharSequence text, BufferType type) {
+        if (mEmojiconTextRender == null) {
+            return;
+        }
         if (!TextUtils.isEmpty(text)) {
             SpannableStringBuilder builder = new SpannableStringBuilder(text);
-            EmojiconHandler.addEmojis(getContext(), builder, mEmojiconSize, mEmojiconAlignment, mEmojiconTextSize, mTextStart, mTextLength, mUseSystemDefault);
+            isAllEmoji = mEmojiconTextRender.replaceWithEmojicons(builder, mTextStart, mTextLength);
             text = builder;
+        } else {
+            isAllEmoji = false;
         }
         super.setText(text, type);
     }

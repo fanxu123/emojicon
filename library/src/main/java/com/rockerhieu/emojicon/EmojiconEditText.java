@@ -31,6 +31,8 @@ public class EmojiconEditText extends EditText {
     private int mEmojiconTextSize;
     private boolean mUseSystemDefault = false;
 
+    private EmojiconTextRender mEmojiconTextRender;
+
     public EmojiconEditText(Context context) {
         super(context);
         mEmojiconSize = (int) getTextSize();
@@ -55,6 +57,14 @@ public class EmojiconEditText extends EditText {
         a.recycle();
         mEmojiconTextSize = (int) getTextSize();
         setText(getText());
+
+        mEmojiconTextRender = new EmojiconTextRender()
+                .context(getContext())
+                .emojiSize(mEmojiconSize)
+                .emojiAlignment(mEmojiconAlignment)
+                .textSize(mEmojiconTextSize)
+                .useSystemDefault(mUseSystemDefault)
+                .setup();
     }
 
     @Override
@@ -71,8 +81,20 @@ public class EmojiconEditText extends EditText {
         updateText();
     }
 
+    public boolean isAllEmoji = false;
+
     private void updateText() {
-        EmojiconHandler.addEmojis(getContext(), getText(), mEmojiconSize, mEmojiconAlignment, mEmojiconTextSize, mUseSystemDefault);
+        if (mEmojiconTextRender == null) {
+            return;
+        }
+        isAllEmoji = mEmojiconTextRender.replaceWithEmojicons(getText());
+    }
+
+    /**
+     * check if all text are emoji icons
+     */
+    public boolean isAllEmoji() {
+        return isAllEmoji;
     }
 
     /**
